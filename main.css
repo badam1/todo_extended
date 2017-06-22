@@ -2,6 +2,9 @@ body {
     background-color: #6db33f;
     color: #ffffff;
 }
+section {
+    padding: 50px;
+}
 
 .row .todo-list {
     margin-top: 20px;
