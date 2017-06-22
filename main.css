@@ -1,0 +1,204 @@
+body {
+    background-color: #6db33f;
+    color: #ffffff;
+}
+
+section {
+    margin-top: 20px;
+    padding: 20px;
+    max-height: 1200px;
+    overflow-y: scroll;
+}
+
+.bg-custom {
+    background-color: #34302d;
+}
+
+.navbar {
+    margin-top: 15px;
+    height: 70px;
+}
+
+.home-page-title {
+    background: url("src/resources/img/todo-bg-new-york.jpg") no-repeat center;
+    background-size: cover;
+    height: 500px;
+}
+
+.main-header-title {
+    padding-top: 160px;
+    font-size: 160px;
+    font-weight: bolder;
+}
+
+.card-block {
+    color: #34302d;
+}
+
+.top-right-corner {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 5px;
+}
+
+.bottom-right-corner {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 5px;
+}
+
+.fa-close:hover {
+    color: #6db33f;
+}
+
+hr.star-light,
+hr.star-primary {
+    padding: 0;
+    border: none;
+    border-top: solid 5px;
+    text-align: center;
+    max-width: 250px;
+    margin: 25px auto 30px;
+}
+
+hr.star-light:after,
+hr.star-primary:after {
+    content: "\f005";
+    font-family: FontAwesome;
+    display: inline-block;
+    position: relative;
+    top: -0.8em;
+    font-size: 2em;
+    padding: 0 0.25em;
+}
+
+hr.star-light {
+    border-color: white;
+}
+
+hr.star-light:after {
+    background-color: #6db33f;
+    color: white;
+}
+
+hr.star-primary {
+    border-color: #34302d;
+}
+
+hr.star-primary:after {
+    background-color: white;
+    color: #34302d;
+}
+
+.checkbox {
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+[type="checkbox"]:not(:checked) + label::before, [type="checkbox"]:checked + label::before {
+    background: white none repeat scroll 0 0;
+    border: 1px solid #aaa;
+    content: "";
+    height: 28px;
+    left: 0;
+    position: absolute;
+    top: 2px;
+    width: 28px;
+}
+
+[type="checkbox"]:not(:checked) + label::after {
+    opacity: 0;
+    transform: scale(0);
+}
+
+[type="checkbox"]:not(:checked) + label::after, [type="checkbox"]:checked + label::after {
+    color: #6db33f;
+    content: "✔";
+    font-size: 32px;
+    left: 4px;
+    line-height: 0.8;
+    position: absolute;
+    top: 3px;
+    transition: all 0.2s ease 0s;
+}
+
+[type="checkbox"]:not(:checked) + label, [type="checkbox"]:checked + label {
+    cursor: pointer;
+    padding-left: 25px;
+    position: relative;
+}
+
+.radio label, .checkbox label {
+    cursor: pointer;
+    font-weight: normal;
+    min-height: 20px;
+    padding-left: 20px;
+    font-size: 1.125rem;
+    line-height: 32px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+a:hover, .dropdown-item:hover, .navbar .nav-item .nav-link:hover {
+    color: #6db33f;
+}
+
+.btn-outline-success {
+    color: #6db33f;
+    border-color: #6db33f;
+}
+
+.modal-content {
+    color: #34302d;
+}
+
+.btn-success {
+    background-color: #6db33f;
+}
+
+#finished-todos {
+    background-color: #ffffff;
+    padding-bottom: 40px;
+}
+
+.finished-todos {
+    color: #34302d;
+}
+
+.todo-white {
+    background-color: #ffffff;
+    margin: 20px;
+}
+
+.todo-green {
+    background-color: #6db33f;
+    margin: 20px;
+    color: #ffffff;
+}
+
+.todo-green .top-right-corner:hover {
+    color: #ffffff;
+}
+
+.todo-green .card-header {
+    background-color: #6db33f;
+}
+
+.todo-green a:hover, .todo-green i:hover {
+    color: #34302d;
+}
+
+.footer {
+    background-color: #34302d;
+    height: 70px;
+    padding-top: 20px;
+}
+
+footer a.fa {
+    text-decoration: none;
+    font-size: x-large;
+}
