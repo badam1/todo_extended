@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Todo</title>
-        <link rel="shortcut icon" type="image/png" href="/src/resources/img/todo-icon.png"/>
+        <link rel="shortcut icon" type="image/png" href="/src/resources/img/todo-logo.png"/>
         <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="main.css"/>
@@ -17,7 +17,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
+                <img height="30" width="30" src="src/resources/img/todo-logo.png"/>&nbsp;
                 <a class="navbar-brand" href="#">Todo X</a>
 
                 <div class="collapse navbar-collapse" id="navbarsExampleContainer">
@@ -97,13 +97,13 @@
                         <div class="form-group row">
                             <label for="todo-title" class="col-2 col-form-label">Title</label>
                             <div class="col-10">
-                                <input class="form-control" type="text" placeholder="Todo title" id="todo-title"/>
+                                <input name="title" class="form-control" type="text" placeholder="Todo title" id="todo-title"/>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="todo-category" class="col-2 col-form-label">Category</label>
                             <div class="col-10">
-                                <select class="form-control" type="" id="todo-category">
+                                <select name="category" class="form-control" type="" id="todo-category">
                                     <option readonly="readonly">Please choose a category</option>
                                 </select>
                             </div>
@@ -111,27 +111,27 @@
                         <div class="form-group row">
                             <label for="todo-link-name" class="col-2 col-form-label">Link&nbsp;name</label>
                             <div class="col-10">
-                                <input class="form-control" type="text" placeholder="your link name..."
+                                <input name="linkName" class="form-control" type="text" placeholder="your link name..."
                                        id="todo-link-name">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="todo-url" class="col-2 col-form-label">Link&nbsp;url</label>
                             <div class="col-10">
-                                <input class="form-control" type="url" placeholder="your link url..." id="todo-url">
+                                <input name="url" class="form-control" type="url" placeholder="your link url..." id="todo-url">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="todo-desc" class="col-2 col-form-label">Todo&nbsp;description</label>
                             <div class="col-10">
-                                <input class="form-control" type="text" placeholder="todo description..."
+                                <input name="description" class="form-control" type="text" placeholder="todo description..."
                                        id="todo-desc">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="todo-time" class="col-2 col-form-label">Todo&nbsp;time</label>
                             <div class="col-10">
-                                <input class="form-control" type="time" placeholder="todo date..." id="todo-time">
+                                <input name="time" class="form-control" type="time" placeholder="todo date..." id="todo-time">
                             </div>
                         </div>
                         <div class="modal-footer">

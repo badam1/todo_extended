@@ -19,6 +19,10 @@ section {
     height: 70px;
 }
 
+.navbar-brand {
+    font-weight: 700;
+}
+
 .home-page-title {
     background: url("src/resources/img/todo-bg-new-york.jpg") no-repeat center;
     background-size: cover;
@@ -186,6 +190,9 @@ a:hover, .dropdown-item:hover, .navbar .nav-item .nav-link:hover {
 
 .todo-green .card-header {
     background-color: #6db33f;
+}
+.todo-white .card-header {
+    background-color: #ffffff;
 }
 
 .todo-green a:hover, .todo-green i:hover {

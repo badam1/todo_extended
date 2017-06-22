@@ -6,10 +6,13 @@ import { Category } from './category';
 
 class TodoX {
 
+    private static counter = 0;
+
     private todoList: Todo[];
     private finishedTodoList: Todo[];
     private categoryList: Category[];
     private categoryListElement: HTMLElement;
+    private categoryListModalElement: HTMLElement;
     private todoListElement: HTMLElement;
     private finishedTodoListElement: HTMLElement;
 
@@ -17,6 +20,7 @@ class TodoX {
         this.todoList = [];
         this.categoryList = [];
         this.categoryListElement = <HTMLElement>document.querySelector('#category-list');
+        this.categoryListModalElement = <HTMLElement> document.querySelector("#todo-category");
         this.todoListElement = <HTMLElement>document.querySelector('.todo-list');
         this.finishedTodoListElement = <HTMLElement>document.querySelector('.finished-todo-list');
         this.onInit();
@@ -26,8 +30,10 @@ class TodoX {
         this.loadMockTodos();
         this.loadMockFinishedTodos();
         this.loadMockCategories();
+        this.initCreateTodoHandler();
         this.refreshTodoList();
         this.refreshCategories();
+        this.refreshCategoriesModal();
     }
 
     private loadMockTodos(): void {
@@ -149,16 +155,60 @@ class TodoX {
         this.categoryListElement.innerHTML += templateFragments.join('');
     }
 
-    private static getCategoryTemplate(category): string {
+    private refreshCategoriesModal(): void {
+        let templateFragments: string[] = [];
+        this.categoryList.forEach(category => templateFragments.push(TodoX.getCategoryTemplateOnModal(category)));
+        this.categoryListModalElement.innerHTML += templateFragments.join('');
+    }
+
+    private static getCategoryTemplate(category: Category): string {
         return `<a class="dropdown-item" href="#">${category.name}</a>`;
     }
 
-    private static completeCategoryList() {
+    private static getCategoryTemplateOnModal(category: Category): string {
+        return `<option value="${category.name}">${category.name}</option>`
+    }
+
+    private static completeCategoryList(): string[] {
         return [`<hr class="dropdown-divider"/>
                                 <a href="" class="dropdown-item" data-toggle="modal" data-target="#addNewCategoryModal">Add
                                     new category</a>
                                 <a href="" class="dropdown-item" data-toggle="modal" data-target="#deleteCategoryModal">Delete
                                     category</a>`];
+    }
+
+    private initCreateTodoHandler(): void {
+        const saveTodoBtn = <HTMLInputElement> document.querySelector('#save-todo-btn');
+        saveTodoBtn.addEventListener('click', this.onAddNewTodo.bind(this, saveTodoBtn));
+    }
+
+    private onAddNewTodo(): void {
+        const newTodoTitle: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-title");
+        const newTodoCategory: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-category");
+        const newTodoLinkName: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-link-name");
+        const newTodoUrl: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-url");
+        const newTodoDescription: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-desc");
+        const newTodoTime: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-time");
+        let inputFields: HTMLInputElement[] = [newTodoTitle, newTodoCategory, newTodoLinkName, newTodoUrl, newTodoDescription, newTodoTime];
+        const newTodoObj: Todo = TodoX.createTodoObjectFromInput(inputFields);
+        this.todoList.unshift(newTodoObj);
+    }
+
+    private static createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
+        let todoObj = {
+            id: TodoX.counter++,
+            finished: false,
+            cssClasses: {cardBackground: 'todo-green'}
+        };
+        inputFields.forEach(input => {
+            todoObj[input.name] = input.value;
+            input.value = '';
+        });
+        return <Todo>todoObj;
+    }
+
+    private displayAlert(type): void {
+
     }
 }
 new TodoX();
