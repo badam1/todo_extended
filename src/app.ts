@@ -6,7 +6,7 @@ import { Category } from './category';
 
 class TodoX {
 
-    private static counter = 0;
+    private static counter = 4;
 
     private todoList: Todo[];
     private finishedTodoList: Todo[];
@@ -40,32 +40,32 @@ class TodoX {
         this.todoList = [
             {
                 id: 1,
-                title: 'Todo 1',
-                url: 'dummyurl1.com',
-                linkName: 'link1 name',
-                description: 'Todo description 1',
+                title: 'Can\'t fight this feeling',
+                url: '//www.youtube.com/embed/zpOULjyy-n8?rel=0',
+                linkName: 'Reo Speedwagon Can\'t fight this feeling',
+                description: 'Listen this song...',
                 time: '01:30:00',
                 finished: false,
                 cssClasses: {
                     cardBackground: 'todo-white'
                 },
                 category: {
-                    name: 'Todo category1'
+                    name: 'Rock'
                 }
             },
             {
                 id: 2,
-                title: 'Todo 2',
-                url: 'dummyurl2.com',
-                linkName: 'link2 name',
-                description: 'Todo description 2',
+                title: 'Gangnam style',
+                url: 'https://www.youtube.com/embed/9bZkp7q19f0?rel=0',
+                linkName: 'PSY Gangnam style',
+                description: 'Listen this song...',
                 time: '10:30:00',
                 finished: false,
                 cssClasses: {
                     cardBackground: 'todo-white'
                 },
                 category: {
-                    name: 'Todo category2'
+                    name: 'Idiot'
                 }
             }
         ];
@@ -75,32 +75,32 @@ class TodoX {
         this.finishedTodoList = [
             {
                 id: 3,
-                title: 'Todo 3',
-                url: 'dummyurl3.com',
-                linkName: 'link3 name',
-                description: 'Todo description 3',
+                title: 'Winds of changes',
+                url: 'https://www.youtube.com/embed/n4RjJKxsamQ?rel=0',
+                linkName: 'Scorpion winds of changes',
+                description: 'Listen this song...',
                 time: '09:30:00',
                 finished: true,
                 cssClasses: {
                     cardBackground: 'todo-green'
                 },
                 category: {
-                    name: 'Todo category3'
+                    name: 'Rock'
                 }
             },
             {
                 id: 2,
-                title: 'Todo 4',
-                url: 'dummyurl4.com',
-                linkName: 'link4 name',
-                description: 'Todo description 4',
+                title: 'Get hurts',
+                url: 'https://www.youtube.com/embed/QV9uGjhx5vw?rel=0',
+                linkName: 'Gaslight anthem Get hurts',
+                description: 'Listen this song...',
                 time: '07:30:00',
                 finished: true,
                 cssClasses: {
                     cardBackground: 'todo-green'
                 },
                 category: {
-                    name: 'Todo category2'
+                    name: 'Rock'
                 }
             }
         ];
@@ -108,13 +108,13 @@ class TodoX {
 
     private loadMockCategories(): void {
         this.categoryList = [{
-            name: 'Category 1'
+            name: 'Rock'
         },
             {
-                name: 'Category 2'
+                name: 'Idiot'
             },
             {
-                name: 'Category 3'
+                name: 'Hip-hop'
             }];
     }
 
@@ -136,6 +136,10 @@ class TodoX {
                                 <br/>
                                 <p class="card-text">${todoItem.description}</p>
                                 <p class="card-text">Link: <a target="_blank" href="${todoItem.url}">${todoItem.linkName}</a></p>
+                                <div class="embed-responsive embed-responsive-4by3">
+                                    <iframe width="420" height="315" class="embed-responsive-item" src="${todoItem.url}" allowfullscreen="allowfullscreen"></iframe>
+                                </div>
+                                <br/>
                                 <div class="checkbox">
                                     <input hidden="hidden" id="todo1" type="checkbox" ${todoItem.finished ? 'checked=checked' : ''}>
                                     <label for="todo1">&nbsp;&nbsp;Finished?</label>
@@ -192,17 +196,22 @@ class TodoX {
         let inputFields: HTMLInputElement[] = [newTodoTitle, newTodoCategory, newTodoLinkName, newTodoUrl, newTodoDescription, newTodoTime];
         const newTodoObj: Todo = TodoX.createTodoObjectFromInput(inputFields);
         this.todoList.unshift(newTodoObj);
+        inputFields.forEach(input => input.value = '');
+        this.refreshTodoList();
     }
 
     private static createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
         let todoObj = {
             id: TodoX.counter++,
             finished: false,
-            cssClasses: {cardBackground: 'todo-green'}
+            cssClasses: {cardBackground: 'todo-white'}
         };
         inputFields.forEach(input => {
-            todoObj[input.name] = input.value;
-            input.value = '';
+            if (input.name == 'category') {
+                todoObj['category'] = {name: input.value};
+            } else {
+                todoObj[input.name] = input.value;
+            }
         });
         return <Todo>todoObj;
     }
