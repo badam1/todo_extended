@@ -7,14 +7,14 @@ section {
     padding: 50px;
 }
 
-.row .todo-list {
+#todo-list-div {
     margin-top: 20px;
     padding: 20px;
     max-height: 1200px;
     overflow-y: scroll;
 }
 
-.row .finished-todos {
+#finished-todo-list-div {
     margin-top: 20px;
     padding: 20px;
     max-height: 1200px;
@@ -234,6 +234,6 @@ footer a.fa {
     position: fixed;
     width: auto;
     right: 50%;
-    top: 10%;
+    top: 20%;
     transform: translateX(50%);
 }

@@ -134,17 +134,17 @@ class TodoX {
 
     private onAddNewTodo(): void {
         let inputFields: HTMLInputElement[] = TodoX.getInputFields();
-        if (TodoX.areInputsValuesNotEmpty(inputFields)) {
+        if (!TodoX.isInputInvalid(inputFields)) {
             const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
             this.todoList.unshift(newTodoObj);
-            inputFields.forEach(input => input.value = '');
             Utils.deleteFromLocalStorage('todoList');
             Utils.saveInLocalStorage('todoList', this.todoList);
             Utils.displayAlert('alert-success', 'Todo successfully created!');
             this.refreshTodoList();
         } else {
-            Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!')
+            Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!');
         }
+        inputFields.forEach(input => input.value = '');
     }
 
     private static getInputFields(): HTMLInputElement[] {
@@ -157,12 +157,8 @@ class TodoX {
         return [newTodoTitle, newTodoCategory, newTodoLinkName, newTodoUrl, newTodoDescription, newTodoTime];
     }
 
-    private static areInputsValuesNotEmpty(inputFields: HTMLInputElement[]): boolean {
-        let isEmpty = false;
-        inputFields.forEach(input => {
-            isEmpty = input.value == '';
-        });
-        return !isEmpty;
+    private static isInputInvalid(inputFields: HTMLInputElement[]): boolean {
+        return inputFields.filter(input => input.value == '').length > 0;
     }
 
     private createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
@@ -255,7 +251,7 @@ class TodoX {
             todoToMove.finished = true;
             this.finishedTodoList.unshift(todoToMove);
             Utils.displayAlert('alert-success', 'Well Done!!! You finished a todo. Todo moved to finished todos!');
-        } else {
+        } else if (!todoCheckBox.checked) {
             this.finishedTodoList.splice(this.todoList.indexOf(todoToMove), 1);
             todoToMove.cssClasses.cardBackground = 'todo-white';
             todoToMove.finished = false;
@@ -324,7 +320,7 @@ class TodoX {
             const categoryBtn: HTMLElement = <HTMLElement>document.querySelector(`#category-${category.name}`);
             categoryBtn.addEventListener('click', this.onSwitchCategory.bind(this, categoryBtn));
         });
-        const categoryAllBtn:HTMLElement = <HTMLElement>document.querySelector('#category-All');
+        const categoryAllBtn: HTMLElement = <HTMLElement>document.querySelector('#category-All');
         categoryAllBtn.addEventListener('click', this.onSwitchCategory.bind(this, categoryAllBtn));
     }
 
@@ -335,9 +331,13 @@ class TodoX {
         if (categoryName != 'All') {
             this.todoList = this.todoList.filter(todo => todo.category.name == categoryName);
             this.finishedTodoList = this.finishedTodoList.filter(todo => todo.category.name == categoryName);
+        } else {
+            this.todoList = Utils.loadFromLocalStorage('todoList');
+            this.finishedTodoList = Utils.loadFromLocalStorage('finishedTodoList');
         }
         this.refreshCategories();
         this.refreshTodoList();
+        Utils.displayAlert('alert-success', `Category switched to ${categoryName}!`);
     }
 }
 new TodoX();
