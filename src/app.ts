@@ -1,12 +1,11 @@
 import { Todo } from './todo';
 import { Category } from './category';
+import { Utils } from './util';
 /**
  * Created by bodansky-apertus on 2017.06.22..
  */
 
 class TodoX {
-
-    private static counter = 4;
 
     private todoList: Todo[];
     private finishedTodoList: Todo[];
@@ -27,95 +26,32 @@ class TodoX {
     }
 
     private onInit(): void {
-        this.loadMockTodos();
-        this.loadMockFinishedTodos();
-        this.loadMockCategories();
-        this.initCreateTodoHandler();
+        this.loadTodoList();
+        this.loadFinishedTodoList();
+        this.loadCategoryList();
         this.refreshTodoList();
         this.refreshCategories();
-        this.refreshCategoriesModal();
     }
 
-    private loadMockTodos(): void {
-        this.todoList = [
-            {
-                id: 1,
-                title: 'Can\'t fight this feeling',
-                url: '//www.youtube.com/embed/zpOULjyy-n8?rel=0',
-                linkName: 'Reo Speedwagon Can\'t fight this feeling',
-                description: 'Listen this song...',
-                time: '01:30:00',
-                finished: false,
-                cssClasses: {
-                    cardBackground: 'todo-white'
-                },
-                category: {
-                    name: 'Rock'
-                }
-            },
-            {
-                id: 2,
-                title: 'Gangnam style',
-                url: 'https://www.youtube.com/embed/9bZkp7q19f0?rel=0',
-                linkName: 'PSY Gangnam style',
-                description: 'Listen this song...',
-                time: '10:30:00',
-                finished: false,
-                cssClasses: {
-                    cardBackground: 'todo-white'
-                },
-                category: {
-                    name: 'Idiot'
-                }
-            }
-        ];
+    private loadTodoList(): void {
+        this.todoList = <Todo[]> Utils.loadFromLocalStorage('todoList');
+        if (this.todoList == null) {
+            this.todoList = [];
+        }
     }
 
-    private loadMockFinishedTodos(): void {
-        this.finishedTodoList = [
-            {
-                id: 3,
-                title: 'Winds of changes',
-                url: 'https://www.youtube.com/embed/n4RjJKxsamQ?rel=0',
-                linkName: 'Scorpion winds of changes',
-                description: 'Listen this song...',
-                time: '09:30:00',
-                finished: true,
-                cssClasses: {
-                    cardBackground: 'todo-green'
-                },
-                category: {
-                    name: 'Rock'
-                }
-            },
-            {
-                id: 2,
-                title: 'Get hurts',
-                url: 'https://www.youtube.com/embed/QV9uGjhx5vw?rel=0',
-                linkName: 'Gaslight anthem Get hurts',
-                description: 'Listen this song...',
-                time: '07:30:00',
-                finished: true,
-                cssClasses: {
-                    cardBackground: 'todo-green'
-                },
-                category: {
-                    name: 'Rock'
-                }
-            }
-        ];
+    private loadFinishedTodoList(): void {
+        this.finishedTodoList = <Todo[]> Utils.loadFromLocalStorage('finishedTodoList');
+        if (this.finishedTodoList == null) {
+            this.finishedTodoList = [];
+        }
     }
 
-    private loadMockCategories(): void {
-        this.categoryList = [{
-            name: 'Rock'
-        },
-            {
-                name: 'Idiot'
-            },
-            {
-                name: 'Hip-hop'
-            }];
+    private loadCategoryList(): void {
+        this.categoryList = <Category[]> Utils.loadFromLocalStorage('categoryList');
+        if (this.categoryList == null) {
+            this.categoryList = [];
+        }
     }
 
     private refreshTodoList(): void {
@@ -125,6 +61,9 @@ class TodoX {
         templateFragments = [];
         this.finishedTodoList.forEach(finishedTodoItem => templateFragments.push(TodoX.getTodoTemplate(finishedTodoItem)));
         this.finishedTodoListElement.innerHTML = templateFragments.join('');
+        this.initDeleteTodoHandler();
+        this.initFinishTodoHandler();
+        this.initCreateTodoHandler();
     }
 
     private static getTodoTemplate(todoItem): string {
@@ -141,11 +80,11 @@ class TodoX {
                                 </div>
                                 <br/>
                                 <div class="checkbox">
-                                    <input hidden="hidden" id="todo1" type="checkbox" ${todoItem.finished ? 'checked=checked' : ''}>
-                                    <label for="todo1">&nbsp;&nbsp;Finished?</label>
+                                    <input hidden="hidden" id="checkbox-${todoItem.id}" type="checkbox" ${todoItem.finished ? 'checked=checked' : ''}>
+                                    <label for="checkbox-${todoItem.id}">&nbsp;&nbsp;Finished?</label>
                                 </div>
                                 <p class="card-text bottom-right-corner">${todoItem.time}</p>
-                                <i class="fa fa-close top-right-corner"></i>
+                                <i id="delete-${todoItem.id}" class="fa fa-close top-right-corner"></i>
                             </div>
                         </div>
                     </div>`;
@@ -157,16 +96,21 @@ class TodoX {
         this.categoryListElement.innerHTML = templateFragments.join('');
         templateFragments = TodoX.completeCategoryList();
         this.categoryListElement.innerHTML += templateFragments.join('');
+        this.refreshCategoriesModal();
+        this.initDeleteCategoryHandler();
+        this.initCreateCategoryHandler();
+        this.initCategorySwitchHandler();
     }
 
     private refreshCategoriesModal(): void {
+        this.categoryListModalElement.innerHTML = `<option readonly="readonly">Please choose a category</option>`;
         let templateFragments: string[] = [];
         this.categoryList.forEach(category => templateFragments.push(TodoX.getCategoryTemplateOnModal(category)));
         this.categoryListModalElement.innerHTML += templateFragments.join('');
     }
 
     private static getCategoryTemplate(category: Category): string {
-        return `<a class="dropdown-item" href="#">${category.name}</a>`;
+        return `<a id="category-${category.name}" class="dropdown-item" href="#">${category.name}</a>`;
     }
 
     private static getCategoryTemplateOnModal(category: Category): string {
@@ -175,6 +119,8 @@ class TodoX {
 
     private static completeCategoryList(): string[] {
         return [`<hr class="dropdown-divider"/>
+                    <a id="category-All" class="dropdown-item" href="#">All<a>
+                        <hr class="dropdown-divider"/>
                                 <a href="" class="dropdown-item" data-toggle="modal" data-target="#addNewCategoryModal">Add
                                     new category</a>
                                 <a href="" class="dropdown-item" data-toggle="modal" data-target="#deleteCategoryModal">Delete
@@ -182,33 +128,57 @@ class TodoX {
     }
 
     private initCreateTodoHandler(): void {
-        const saveTodoBtn = <HTMLInputElement> document.querySelector('#save-todo-btn');
+        const saveTodoBtn = document.querySelector('#save-todo-btn');
         saveTodoBtn.addEventListener('click', this.onAddNewTodo.bind(this, saveTodoBtn));
     }
 
     private onAddNewTodo(): void {
+        let inputFields: HTMLInputElement[] = TodoX.getInputFields();
+        if (TodoX.areInputsValuesNotEmpty(inputFields)) {
+            const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
+            this.todoList.unshift(newTodoObj);
+            inputFields.forEach(input => input.value = '');
+            Utils.deleteFromLocalStorage('todoList');
+            Utils.saveInLocalStorage('todoList', this.todoList);
+            Utils.displayAlert('alert-success', 'Todo successfully created!');
+            this.refreshTodoList();
+        } else {
+            Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!')
+        }
+    }
+
+    private static getInputFields(): HTMLInputElement[] {
         const newTodoTitle: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-title");
         const newTodoCategory: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-category");
         const newTodoLinkName: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-link-name");
         const newTodoUrl: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-url");
         const newTodoDescription: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-desc");
         const newTodoTime: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-time");
-        let inputFields: HTMLInputElement[] = [newTodoTitle, newTodoCategory, newTodoLinkName, newTodoUrl, newTodoDescription, newTodoTime];
-        const newTodoObj: Todo = TodoX.createTodoObjectFromInput(inputFields);
-        this.todoList.unshift(newTodoObj);
-        inputFields.forEach(input => input.value = '');
-        this.refreshTodoList();
+        return [newTodoTitle, newTodoCategory, newTodoLinkName, newTodoUrl, newTodoDescription, newTodoTime];
     }
 
-    private static createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
+    private static areInputsValuesNotEmpty(inputFields: HTMLInputElement[]): boolean {
+        let isEmpty = false;
+        inputFields.forEach(input => {
+            isEmpty = input.value == '';
+        });
+        return !isEmpty;
+    }
+
+    private createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
         let todoObj = {
-            id: TodoX.counter++,
+            id: this.getNewTodoId(),
             finished: false,
             cssClasses: {cardBackground: 'todo-white'}
         };
         inputFields.forEach(input => {
             if (input.name == 'category') {
                 todoObj['category'] = {name: input.value};
+            } else if (input.name == 'url') {
+                const embedLinkPrefix: string = 'https://www.youtube.com/embed/';
+                const embedLinkPostFix: string = '?rel=0';
+                let linkCode = input.value.split('=')[1];
+                todoObj[input.name] = `${embedLinkPrefix}${linkCode}${embedLinkPostFix}`
             } else {
                 todoObj[input.name] = input.value;
             }
@@ -216,8 +186,158 @@ class TodoX {
         return <Todo>todoObj;
     }
 
-    private displayAlert(type): void {
+    private getNewTodoId(): number {
+        let largestIdInTodoList = 0;
+        this.todoList.forEach(todo => {
+            largestIdInTodoList = todo.id > largestIdInTodoList ? todo.id : largestIdInTodoList;
+        });
+        this.finishedTodoList.forEach(todo => {
+            largestIdInTodoList = todo.id > largestIdInTodoList ? todo.id : largestIdInTodoList;
+        });
+        return ++largestIdInTodoList;
+    }
 
+    private initDeleteTodoHandler(): void {
+        this.todoList.forEach(todo => {
+            const deleteTodoBtn = document.querySelector(`#delete-${todo.id}`);
+            deleteTodoBtn.addEventListener('click', this.onDeleteTodo.bind(this, deleteTodoBtn));
+        });
+        this.finishedTodoList.forEach(todo => {
+            const deleteTodoBtn = document.querySelector(`#delete-${todo.id}`);
+            deleteTodoBtn.addEventListener('click', this.onDeleteTodo.bind(this, deleteTodoBtn));
+        });
+    }
+
+    private onDeleteTodo(deleteTodoBtn: Element): void {
+        const todoToDeleteId: number = +deleteTodoBtn.id.split('-')[1];
+        let todoToDelete: Todo = this.findInTodoListById(todoToDeleteId);
+        if (todoToDelete != null && todoToDelete != undefined) {
+            this.todoList.splice(this.todoList.indexOf(todoToDelete), 1);
+            Utils.deleteFromLocalStorage('todoList');
+            Utils.saveInLocalStorage('todoList', this.todoList);
+        } else {
+            this.finishedTodoList.splice(this.finishedTodoList.indexOf(todoToDelete), 1);
+            Utils.deleteFromLocalStorage('finishedTodoList');
+            Utils.saveInLocalStorage('finishedTodoList', this.finishedTodoList);
+        }
+        this.refreshTodoList();
+        Utils.displayAlert('alert-success', 'Todo successfully deleted!');
+    }
+
+    private findInTodoListById(id: number): Todo {
+        return this.todoList.find(todo => todo.id == id);
+    }
+
+    private findInFinishedTodoListById(id: number): Todo {
+        return this.finishedTodoList.find(todo => todo.id == id);
+    }
+
+    private initFinishTodoHandler(): void {
+        this.todoList.forEach(todo => {
+            const todoCheckBox: HTMLInputElement = <HTMLInputElement>document.querySelector(`#checkbox-${todo.id}`);
+            todoCheckBox.addEventListener('change', this.onFinishEventChange.bind(this, todoCheckBox));
+        });
+        this.finishedTodoList.forEach(todo => {
+            const todoCheckBox: HTMLInputElement = <HTMLInputElement>document.querySelector(`#checkbox-${todo.id}`);
+            todoCheckBox.addEventListener('change', this.onFinishEventChange.bind(this, todoCheckBox));
+        });
+    }
+
+    private onFinishEventChange(todoCheckBox: HTMLInputElement): void {
+        const todoToMoveId: number = +todoCheckBox.id.split('-')[1];
+        let todoToMove: Todo = this.findInTodoListById(todoToMoveId);
+        if (todoToMove == undefined) {
+            todoToMove = this.findInFinishedTodoListById(todoToMoveId);
+        }
+        if (todoToMove != null && todoCheckBox.checked) {
+            this.todoList.splice(this.todoList.indexOf(todoToMove), 1);
+            todoToMove.cssClasses.cardBackground = 'todo-green';
+            todoToMove.finished = true;
+            this.finishedTodoList.unshift(todoToMove);
+            Utils.displayAlert('alert-success', 'Well Done!!! You finished a todo. Todo moved to finished todos!');
+        } else {
+            this.finishedTodoList.splice(this.todoList.indexOf(todoToMove), 1);
+            todoToMove.cssClasses.cardBackground = 'todo-white';
+            todoToMove.finished = false;
+            this.todoList.unshift(todoToMove);
+            Utils.displayAlert('alert-warning', 'Oops !!! Looks like you remove a todo from finished todos. Todo moved to todo list!');
+        }
+        Utils.deleteFromLocalStorage('todoList');
+        Utils.deleteFromLocalStorage('finishedTodoList');
+        Utils.saveInLocalStorage('todoList', this.todoList);
+        Utils.saveInLocalStorage('finishedTodoList', this.finishedTodoList);
+        this.refreshTodoList();
+    }
+
+    private initCreateCategoryHandler(): void {
+        const saveCategoryBtn = document.querySelector('#save-category-btn');
+        saveCategoryBtn.addEventListener('click', this.onAddNewCategory.bind(this, saveCategoryBtn));
+    }
+
+    private onAddNewCategory(): void {
+        let inputField: HTMLInputElement = <HTMLInputElement>document.querySelector("#category-name");
+        if (inputField.value != '') {
+            const newCategoryObj: Category = {name: inputField.value};
+            this.categoryList.unshift(newCategoryObj);
+            inputField.value = '';
+            Utils.deleteFromLocalStorage('categoryList');
+            Utils.saveInLocalStorage('categoryList', this.categoryList);
+            this.refreshCategories();
+            Utils.displayAlert('alert-success', 'Category successfully created!')
+        } else {
+            Utils.displayAlert('alert-danger', 'You must give a name to add new category!');
+        }
+    }
+
+    private initDeleteCategoryHandler(): void {
+        const deleteCategoryBtn = document.querySelector("#delete-category-btn");
+        deleteCategoryBtn.addEventListener('click', this.onDeleteCategory.bind(this, deleteCategoryBtn));
+    }
+
+    private onDeleteCategory(): void {
+        let inputField: HTMLInputElement = <HTMLInputElement>document.querySelector("#delete-category-name");
+        let index: number = this.categoryList.findIndex(category => category.name == inputField.value);
+        if (inputField.value != '' && index > -1) {
+            if (this.isCategoryNotUsed(inputField.value)) {
+                this.categoryList.splice(index, 1);
+                Utils.deleteFromLocalStorage('categoryList');
+                Utils.saveInLocalStorage('categoryList', this.categoryList);
+                this.refreshCategories();
+                Utils.displayAlert('alert-success', 'Category successfully deleted!');
+            } else {
+                Utils.displayAlert('alert-danger', 'Can\'t delete category while you use it on an existed todo');
+            }
+        } else {
+            Utils.displayAlert('alert-danger', 'Category not exists!');
+        }
+        inputField.value = '';
+    }
+
+    private isCategoryNotUsed(categoryName: string): boolean {
+        let tempTodoList = this.todoList.filter(todo => todo.category.name == categoryName);
+        let tempFinishedTodoList = this.finishedTodoList.filter(todo => todo.category.name == categoryName);
+        return tempTodoList.length == 0 && tempFinishedTodoList.length == 0;
+    }
+
+    private initCategorySwitchHandler(): void {
+        this.categoryList.forEach(category => {
+            const categoryBtn: HTMLElement = <HTMLElement>document.querySelector(`#category-${category.name}`);
+            categoryBtn.addEventListener('click', this.onSwitchCategory.bind(this, categoryBtn));
+        });
+        const categoryAllBtn:HTMLElement = <HTMLElement>document.querySelector('#category-All');
+        categoryAllBtn.addEventListener('click', this.onSwitchCategory.bind(this, categoryAllBtn));
+    }
+
+    private onSwitchCategory(categoryBtn: HTMLElement): void {
+        this.todoList = Utils.loadFromLocalStorage('todoList');
+        this.finishedTodoList = Utils.loadFromLocalStorage('finishedTodoList');
+        let categoryName: string = categoryBtn.id.split('-')[1];
+        if (categoryName != 'All') {
+            this.todoList = this.todoList.filter(todo => todo.category.name == categoryName);
+            this.finishedTodoList = this.finishedTodoList.filter(todo => todo.category.name == categoryName);
+        }
+        this.refreshCategories();
+        this.refreshTodoList();
     }
 }
 new TodoX();

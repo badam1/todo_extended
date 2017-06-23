@@ -17,9 +17,8 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <img height="30" width="30" src="src/resources/img/todo-logo.png"/>&nbsp;
-                <a class="navbar-brand" href="#">Todo X</a>
-
+                <img id="todo-logo-g" height="30" width="30" src="src/resources/img/todo-logo.png"/>&nbsp;
+                <a id="navbar-brand" class="navbar-brand" href="#">Todo X</a>
                 <div class="collapse navbar-collapse" id="navbarsExampleContainer">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
@@ -61,9 +60,6 @@
                 <h1 class="text-center">Todo list</h1>
                 <hr class="star-light">
                 <br/>
-                <div class="alert alert-success hidden-xs-up" role="alert">
-                    <strong>Well done!</strong> You create a new todo.
-                </div>
                 <div class="row todo-list"></div>
             </div>
         </section>
@@ -75,9 +71,6 @@
                 <h1 class="text-center">Finished todos</h1>
                 <hr class="star-primary">
                 <br/>
-                <div class="alert alert-success hidden-xs-up" role="alert">
-                    <strong>Well done!</strong> You create a new todo.
-                </div>
                 <div class="row finished-todo-list"></div>
             </div>
         </section>
@@ -97,7 +90,8 @@
                         <div class="form-group row">
                             <label for="todo-title" class="col-2 col-form-label">Title</label>
                             <div class="col-10">
-                                <input name="title" class="form-control" type="text" placeholder="Todo title" id="todo-title"/>
+                                <input name="title" class="form-control" type="text" placeholder="Todo title"
+                                       id="todo-title"/>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -118,25 +112,30 @@
                         <div class="form-group row">
                             <label for="todo-url" class="col-2 col-form-label">Link&nbsp;url</label>
                             <div class="col-10">
-                                <input name="url" class="form-control" type="url" placeholder="your link url..." id="todo-url">
+                                <input name="url" class="form-control" type="url" placeholder="your link url..."
+                                       id="todo-url">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="todo-desc" class="col-2 col-form-label">Todo&nbsp;description</label>
                             <div class="col-10">
-                                <input name="description" class="form-control" type="text" placeholder="todo description..."
+                                <input name="description" class="form-control" type="text"
+                                       placeholder="todo description..."
                                        id="todo-desc">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="todo-time" class="col-2 col-form-label">Todo&nbsp;time</label>
                             <div class="col-10">
-                                <input name="time" class="form-control" type="time" placeholder="todo date..." id="todo-time">
+                                <input name="time" class="form-control" type="time" placeholder="todo date..."
+                                       id="todo-time">
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                            <button id="save-todo-btn" type="button" data-dismiss="modal" class="btn btn-success">Save Todo</button>
+                            <button id="save-todo-btn" type="button" data-dismiss="modal" class="btn btn-success">Save
+                                Todo
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -165,7 +164,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                            <button id="save-category-btn" type="button" class="btn btn-success">Save Category
+                            <button id="save-category-btn" type="button" data-dismiss="modal" class="btn btn-success">Save Category
                             </button>
                         </div>
                     </div>
@@ -195,13 +194,15 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                            <button id="delete-category-btn" type="button" class="btn btn-danger">Delete Category
+                            <button id="delete-category-btn" type="button" data-dismiss="modal" class="btn btn-danger">Delete Category
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+            <div id="alert" class="alert display-none" role="alert">Test alert</div>
 
         <!-- Footer -->
         <footer class="text-center footer">

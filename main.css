@@ -2,6 +2,7 @@ body {
     background-color: #6db33f;
     color: #ffffff;
 }
+
 section {
     padding: 50px;
 }
@@ -220,7 +221,19 @@ footer a.fa {
     text-decoration: none;
     font-size: x-large;
 }
+
 .embed-responsive {
     max-height: 400px;
     max-width: 300px;
+}
+
+.display-none {
+    display: none;
+}
+.alert {
+    position: fixed;
+    width: auto;
+    right: 50%;
+    top: 10%;
+    transform: translateX(50%);
 }
