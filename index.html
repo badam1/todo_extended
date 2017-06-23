@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" type="text/css" href="main.css"/>
     </head>
-    <body id="page-top">
+    <body data-spy="scroll" id="page-top">
         <!-- Navbar -->
         <nav class="navbar sticky-top navbar-inverse bg-custom navbar-toggleable-md">
             <div class="container">
@@ -22,10 +22,10 @@
                 <div class="collapse navbar-collapse" id="navbarsExampleContainer">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="#todo-list"><i class="fa fa-list"></i>&nbsp;Todo list</a>
+                            <a id="todo-list-nav" class="nav-link" href="#todo-list"><i class="fa fa-list"></i>&nbsp;Todo list</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#finished-todos"><i class="fa fa-list"></i>&nbsp;Finished
+                            <a id="finished-todo-list-nav" class="nav-link" href="#finished-todos"><i class="fa fa-list"></i>&nbsp;Finished
                                 todos</a>
                         </li>
                         <li class="nav-item">
@@ -40,8 +40,8 @@
                         </li>
                     </ul>
                     <form class="form-inline my-2 my-md-0">
-                        <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                        <button id="search-btn" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search
+                        <input id="search" class="form-control mr-sm-2" type="text" placeholder="Search">
+                        <button id="search-btn" class="btn btn-outline-success my-2 my-sm-0">Search
                         </button>
                     </form>
                 </div>
@@ -54,7 +54,7 @@
         </header>
 
         <!-- Todos -->
-        <section id="todo-list">
+        <section data-target="todo-list-nav" id="todo-list">
             <div class="container-fluid">
                 <br/>
                 <h1 class="text-center">Todo list</h1>
@@ -65,7 +65,7 @@
         </section>
 
         <!-- Finished todos  -->
-        <section id="finished-todos">
+        <section data-target="finished-todo-list-nav" id="finished-todos">
             <div class="container-fluid finished-todos">
                 <br/>
                 <h1 class="text-center">Finished todos</h1>
@@ -76,7 +76,7 @@
         </section>
 
         <!-- Add new Todo Modal -->
-        <div class="modal fade" id="addNewTodoModal" tabindex="-1" role="dialog" aria-labelledby="addNewTodoModalLabel"
+        <div class="modal fade" data-backdrop="static" id="addNewTodoModal" tabindex="-1" role="dialog" aria-labelledby="addNewTodoModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -143,7 +143,7 @@
         </div>
 
         <!-- Add new Category Modal -->
-        <div class="modal fade" id="addNewCategoryModal" tabindex="-1" role="dialog"
+        <div class="modal fade" data-backdrop="static" id="addNewCategoryModal" tabindex="-1" role="dialog"
              aria-labelledby="addNewCategoryModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -173,7 +173,7 @@
         </div>
 
         <!-- Delete Category Modal -->
-        <div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog"
+        <div class="modal fade" data-backdrop="static" id="deleteCategoryModal" tabindex="-1" role="dialog"
              aria-labelledby="deleteCategoryModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">

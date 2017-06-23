@@ -1,6 +1,8 @@
+import { Observable } from 'rxjs';
 /**
  * Created by bodansky-apertus on 2017.06.23..
  */
+
 export class Utils {
 
     static fadeIn(element: HTMLElement) {
@@ -45,5 +47,16 @@ export class Utils {
         setTimeout(function () {
             Utils.fadeOut(alert);
         }, 3000);
+    }
+
+    static attachBrandLogoColorChangeHandler() {
+        const brandNameElement: HTMLElement = <HTMLElement>document.querySelector('.navbar-brand');
+        const brandLogoElement: HTMLImageElement = <HTMLImageElement>document.querySelector('#todo-logo-g');
+        Observable.fromEvent(brandNameElement, 'mouseover').subscribe(() => {
+            brandLogoElement.src = 'src/resources/img/todo-logo-white.png';
+        });
+        Observable.fromEvent(brandNameElement, 'mouseleave').subscribe(() => {
+            brandLogoElement.src = 'src/resources/img/todo-logo.png';
+        });
     }
 }

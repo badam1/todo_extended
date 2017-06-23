@@ -1,6 +1,7 @@
 import { Todo } from './todo';
 import { Category } from './category';
 import { Utils } from './util';
+import { Observable } from 'rxjs/Observable';
 /**
  * Created by bodansky-apertus on 2017.06.22..
  */
@@ -31,6 +32,7 @@ class TodoX {
         this.loadCategoryList();
         this.refreshTodoList();
         this.refreshCategories();
+        Utils.attachBrandLogoColorChangeHandler();
     }
 
     private loadTodoList(): void {
@@ -64,6 +66,7 @@ class TodoX {
         this.initDeleteTodoHandler();
         this.initFinishTodoHandler();
         this.initCreateTodoHandler();
+        this.attachSearchListener();
     }
 
     private static getTodoTemplate(todoItem): string {
@@ -338,6 +341,12 @@ class TodoX {
         this.refreshCategories();
         this.refreshTodoList();
         Utils.displayAlert('alert-success', `Category switched to ${categoryName}!`);
+    }
+
+    private attachSearchListener() {
+        const searchInputElement: HTMLInputElement = <HTMLInputElement>document.querySelector('#search');
+        let keyDowns = Observable.fromEvent(searchInputElement, 'keydown');
+        //todo search rxjs
     }
 }
 new TodoX();
