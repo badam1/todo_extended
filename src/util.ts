@@ -72,4 +72,57 @@ export class Utils {
             searchBtn.textContent = 'Search'
         });
     }
+
+    static attachShowVideoBtnHandler() {
+        const showVideoButtons: HTMLCollection = <HTMLCollection>document.querySelectorAll('.show-video-btn');
+        let todoVideoElement: HTMLElement;
+        Observable.fromEvent(showVideoButtons, 'click').subscribe((e) => {
+            const showVideoBtn: HTMLElement = e.srcElement;
+            if (showVideoBtn.innerText == 'Show video') {
+                const todoId: number = +showVideoBtn.dataset.id;
+                todoVideoElement = <HTMLElement>document.querySelector(`#video-embed-${todoId}`);
+                todoVideoElement.className = 'embed-responsive embed-responsive-4by3';
+                showVideoBtn.innerText = 'Hide video';
+                showVideoBtn.className = 'btn btn-outline-primary show-video-btn'
+            } else {
+                const todoId: number = +showVideoBtn.dataset.id;
+                todoVideoElement = <HTMLElement>document.querySelector(`#video-embed-${todoId}`);
+                todoVideoElement.className += ' display-none';
+                showVideoBtn.innerText = 'Show video';
+                showVideoBtn.className = 'btn btn-primary show-video-btn'
+            }
+        });
+    }
+
+    static attachShowMoreTodoBtnHandler() {
+        const showMoreTodoBtn:HTMLElement = <HTMLElement>document.querySelector('#show-more-todo');
+        const todoListDiv:HTMLElement = <HTMLElement>document.querySelector('#todo-list-div');
+        Observable.fromEvent(showMoreTodoBtn, 'click').subscribe(() => {
+            if (showMoreTodoBtn.innerText == 'Show more') {
+                todoListDiv.className = 'row todo-list';
+                showMoreTodoBtn.innerText = 'Show less';
+                showMoreTodoBtn.className = 'btn btn-outline-primary';
+            } else {
+                todoListDiv.className = 'row todo-list list-max-height';
+                showMoreTodoBtn.innerText = 'Show more';
+                showMoreTodoBtn.className = 'btn btn-primary';
+            }
+        });
+    }
+
+    static attachShowMoreFinishedTodoBtnHandler() {
+        const showMoreTodoBtn:HTMLElement = <HTMLElement>document.querySelector('#show-more-finished-todo');
+        const todoListDiv:HTMLElement = <HTMLElement>document.querySelector('#finished-todo-list-div');
+        Observable.fromEvent(showMoreTodoBtn, 'click').subscribe(() => {
+            if (showMoreTodoBtn.innerText == 'Show more') {
+                todoListDiv.className = 'row finished-todo-list';
+                showMoreTodoBtn.innerText = 'Show less';
+                showMoreTodoBtn.className = 'btn btn-outline-primary';
+            } else {
+                todoListDiv.className = 'row finished-todo-list list-max-height';
+                showMoreTodoBtn.innerText = 'Show more';
+                showMoreTodoBtn.className = 'btn btn-primary';
+            }
+        });
+    }
 }

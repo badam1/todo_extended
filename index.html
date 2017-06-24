@@ -22,10 +22,12 @@
                 <div class="collapse navbar-collapse" id="navbarsExampleContainer">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a id="todo-list-nav" class="nav-link" href="#todo-list"><i class="fa fa-list"></i>&nbsp;Todo list</a>
+                            <a id="todo-list-nav" class="nav-link" href="#todo-list"><i class="fa fa-list"></i>&nbsp;Todo
+                                list</a>
                         </li>
                         <li class="nav-item">
-                            <a id="finished-todo-list-nav" class="nav-link" href="#finished-todos"><i class="fa fa-list"></i>&nbsp;Finished
+                            <a id="finished-todo-list-nav" class="nav-link" href="#finished-todos"><i
+                                    class="fa fa-list"></i>&nbsp;Finished
                                 todos</a>
                         </li>
                         <li class="nav-item">
@@ -60,7 +62,11 @@
                 <h1 class="text-center">Todo list</h1>
                 <hr class="star-light">
                 <br/>
-                <div id="todo-list-div" class="row todo-list"></div>
+                <div id="todo-list-div" class="row todo-list list-max-height"></div>
+                <br/><br/>
+                <div class="col-xs-12 text-center">
+                    <button id="show-more-todo" class="btn btn-primary">Show more</button>
+                </div>
             </div>
         </section>
 
@@ -71,12 +77,17 @@
                 <h1 class="text-center">Finished todos</h1>
                 <hr class="star-primary">
                 <br/>
-                <div id="finished-todo-list-div" class="row finished-todo-list"></div>
+                <div id="finished-todo-list-div" class="row finished-todo-list list-max-height"></div>
+                <br/><br/>
+                <div class="col-xs-12 text-center">
+                    <button id="show-more-finished-todo" class="btn btn-primary">Show more</button>
+                </div>
             </div>
         </section>
 
         <!-- Add new Todo Modal -->
-        <div class="modal fade" data-backdrop="static" id="addNewTodoModal" tabindex="-1" role="dialog" aria-labelledby="addNewTodoModalLabel"
+        <div class="modal fade" data-backdrop="static" id="addNewTodoModal" tabindex="-1" role="dialog"
+             aria-labelledby="addNewTodoModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -164,7 +175,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                            <button id="save-category-btn" type="button" data-dismiss="modal" class="btn btn-success">Save Category
+                            <button id="save-category-btn" type="button" data-dismiss="modal" class="btn btn-success">
+                                Save Category
                             </button>
                         </div>
                     </div>
@@ -194,7 +206,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                            <button id="delete-category-btn" type="button" data-dismiss="modal" class="btn btn-danger">Delete Category
+                            <button id="delete-category-btn" type="button" data-dismiss="modal" class="btn btn-danger">
+                                Delete Category
                             </button>
                         </div>
                     </div>
@@ -202,7 +215,7 @@
             </div>
         </div>
 
-            <div id="alert" class="alert display-none" role="alert">Test alert</div>
+        <div id="alert" class="alert display-none" role="alert">Test alert</div>
 
         <!-- Footer -->
         <footer class="text-center footer">

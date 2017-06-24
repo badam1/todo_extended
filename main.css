@@ -7,18 +7,14 @@ section {
     padding: 50px;
 }
 
-#todo-list-div {
+#todo-list-div, #finished-todo-list-div {
     margin-top: 20px;
     padding: 20px;
-    max-height: 1200px;
-    overflow-y: scroll;
 }
 
-#finished-todo-list-div {
-    margin-top: 20px;
-    padding: 20px;
-    max-height: 1200px;
-    overflow-y: scroll;
+.list-max-height {
+    max-height: 2200px;
+    overflow-y: hidden;
 }
 
 .bg-custom {
@@ -196,7 +192,7 @@ a:hover, .dropdown-item:hover, .navbar .nav-item .nav-link:hover {
 }
 
 .todo-green .top-right-corner:hover {
-    color: #ffffff;
+    color: #34302d;
 }
 
 .todo-green .card-header {

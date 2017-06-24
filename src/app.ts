@@ -68,20 +68,26 @@ export class TodoX {
         this.initFinishTodoHandler();
         this.initCreateTodoHandler();
         this.attachSearchListener();
+        Utils.attachShowVideoBtnHandler();
+        Utils.attachShowMoreTodoBtnHandler();
+        Utils.attachShowMoreFinishedTodoBtnHandler();
     }
 
     private static getTodoTemplate(todoItem): string {
         return `<div class="container">
                         <div class="card w-100 ${todoItem.cssClasses.cardBackground}">
-                            <div class="card-block">
+                            <div class="card-block ${todoItem.cssClasses.cardBackground}">
                                 <h3 class="card-title">${todoItem.title}</h3>
                                 <h6 class="card-header">${todoItem.category.name}</h6>
                                 <br/>
                                 <p class="card-text">${todoItem.description}</p>
                                 <p class="card-text">Link: <a target="_blank" href="${todoItem.url}">${todoItem.linkName}</a></p>
-                                <div class="embed-responsive embed-responsive-4by3">
-                                    <iframe width="420" height="315" class="embed-responsive-item" src="${todoItem.url}" allowfullscreen="allowfullscreen"></iframe>
-                                </div>
+                                <br/>
+                                <button data-id="${todoItem.id}" class="btn btn-primary show-video-btn">Show video</button>
+                                <br/><br/>
+                                <div id="video-embed-${todoItem.id}" class="display-none embed-responsive embed-responsive-4by3">
+                                 <iframe width="420" height="315" class="embed-responsive-item" src="${todoItem.url}" allowfullscreen="allowfullscreen"></iframe>
+                                    </div>
                                 <br/>
                                 <div class="checkbox">
                                     <input hidden="hidden" id="checkbox-${todoItem.id}" type="checkbox" ${todoItem.finished ? 'checked=checked' : ''}>
@@ -138,21 +144,17 @@ export class TodoX {
 
     private onAddNewTodo(): void {
         let inputFields: HTMLInputElement[] = TodoX.getInputFields();
-        if (TodoX.isUrlMatchRegex()) {
-            if (!TodoX.isInputInvalid(inputFields)) {
-                const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
-                this.todoList.unshift(newTodoObj);
-                Utils.deleteFromLocalStorage('todoList');
-                Utils.saveInLocalStorage('todoList', this.todoList);
-                Utils.displayAlert('alert-success', 'Todo successfully created!');
-                this.refreshTodoList();
-            } else {
-                Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!');
-            }
+        if (!TodoX.isInputInvalid(inputFields)) {
+            const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
+            this.todoList.unshift(newTodoObj);
+            Utils.deleteFromLocalStorage('todoList');
+            Utils.saveInLocalStorage('todoList', this.todoList);
+            Utils.displayAlert('alert-success', 'Todo successfully created!');
         } else {
-            Utils.displayAlert('alert-danger', 'Sorry, can\'t transform this youtube link, please choose a simple one!');
+            Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!');
         }
         inputFields.forEach(input => input.value = '');
+        this.refreshTodoList();
     }
 
     private static getInputFields(): HTMLInputElement[] {
@@ -167,12 +169,6 @@ export class TodoX {
 
     private static isInputInvalid(inputFields: HTMLInputElement[]): boolean {
         return inputFields.filter(input => input.value == '').length > 0;
-    }
-
-    private static isUrlMatchRegex(): boolean {
-        const newTodoUrl: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-url");
-        let regexp = new RegExp(/https:\/\/www.youtube.com\/watch\?v=.{11}/);
-        return regexp.test(newTodoUrl.value);
     }
 
     private createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
