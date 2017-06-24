@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
  * Created by bodansky-apertus on 2017.06.22..
  */
 
-class TodoX {
+export class TodoX {
 
     private todoList: Todo[];
     private finishedTodoList: Todo[];
@@ -33,6 +33,7 @@ class TodoX {
         this.refreshTodoList();
         this.refreshCategories();
         Utils.attachBrandLogoColorChangeHandler();
+        Utils.attachSearchBtnChangeHandler();
     }
 
     private loadTodoList(): void {
@@ -137,15 +138,19 @@ class TodoX {
 
     private onAddNewTodo(): void {
         let inputFields: HTMLInputElement[] = TodoX.getInputFields();
-        if (!TodoX.isInputInvalid(inputFields)) {
-            const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
-            this.todoList.unshift(newTodoObj);
-            Utils.deleteFromLocalStorage('todoList');
-            Utils.saveInLocalStorage('todoList', this.todoList);
-            Utils.displayAlert('alert-success', 'Todo successfully created!');
-            this.refreshTodoList();
+        if (TodoX.isUrlMatchRegex()) {
+            if (!TodoX.isInputInvalid(inputFields)) {
+                const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
+                this.todoList.unshift(newTodoObj);
+                Utils.deleteFromLocalStorage('todoList');
+                Utils.saveInLocalStorage('todoList', this.todoList);
+                Utils.displayAlert('alert-success', 'Todo successfully created!');
+                this.refreshTodoList();
+            } else {
+                Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!');
+            }
         } else {
-            Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!');
+            Utils.displayAlert('alert-danger', 'Sorry, can\'t transform this youtube link, please choose a simple one!');
         }
         inputFields.forEach(input => input.value = '');
     }
@@ -162,6 +167,12 @@ class TodoX {
 
     private static isInputInvalid(inputFields: HTMLInputElement[]): boolean {
         return inputFields.filter(input => input.value == '').length > 0;
+    }
+
+    private static isUrlMatchRegex(): boolean {
+        const newTodoUrl: HTMLInputElement = <HTMLInputElement> document.querySelector("#todo-url");
+        let regexp = new RegExp(/https:\/\/www.youtube.com\/watch\?v=.{11}/);
+        return regexp.test(newTodoUrl.value);
     }
 
     private createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
@@ -328,25 +339,60 @@ class TodoX {
     }
 
     private onSwitchCategory(categoryBtn: HTMLElement): void {
-        this.todoList = Utils.loadFromLocalStorage('todoList');
-        this.finishedTodoList = Utils.loadFromLocalStorage('finishedTodoList');
+        this.loadTodoListsFromLocalStorage();
         let categoryName: string = categoryBtn.id.split('-')[1];
         if (categoryName != 'All') {
             this.todoList = this.todoList.filter(todo => todo.category.name == categoryName);
             this.finishedTodoList = this.finishedTodoList.filter(todo => todo.category.name == categoryName);
         } else {
-            this.todoList = Utils.loadFromLocalStorage('todoList');
-            this.finishedTodoList = Utils.loadFromLocalStorage('finishedTodoList');
+            this.loadTodoListsFromLocalStorage();
         }
         this.refreshCategories();
         this.refreshTodoList();
         Utils.displayAlert('alert-success', `Category switched to ${categoryName}!`);
     }
 
-    private attachSearchListener() {
+    private attachSearchListener(): void {
         const searchInputElement: HTMLInputElement = <HTMLInputElement>document.querySelector('#search');
-        let keyDowns = Observable.fromEvent(searchInputElement, 'keydown');
-        //todo search rxjs
+        let source = Observable.fromEvent(searchInputElement, 'keyup').map(i => i.currentTarget.value).debounceTime(500);
+        source.subscribe(keyword => this.filterTodosWithKeyWord(keyword));
+    }
+
+    private filterTodosWithKeyWord(keyword: string) {
+        keyword = keyword.toLowerCase();
+        this.loadTodoListsFromLocalStorage();
+        this.filterTodoListWithKeyword(keyword);
+        this.filterFinishedTodoListWithKeyword(keyword);
+        this.refreshTodoList();
+    }
+
+    private filterTodoListWithKeyword(keyWord: string): void {
+        let resultTodoList: Todo[] = [];
+        this.todoList.filter(todo => {
+            if (todo.title.toLowerCase().includes(keyWord)
+                || todo.description.toLowerCase().includes(keyWord)
+                || todo.category.name.toLowerCase().includes(keyWord)) {
+                resultTodoList.push(todo);
+            }
+        });
+        this.todoList = resultTodoList;
+    }
+
+    private filterFinishedTodoListWithKeyword(keyWord: string): void {
+        let resultFinishedTodoList: Todo[] = [];
+        this.finishedTodoList.filter(todo => {
+            if (todo.title.toLowerCase().includes(keyWord)
+                || todo.description.toLowerCase().includes(keyWord)
+                || todo.category.name.toLowerCase().includes(keyWord)) {
+                resultFinishedTodoList.push(todo);
+            }
+        });
+        this.finishedTodoList = resultFinishedTodoList;
+    }
+
+    private loadTodoListsFromLocalStorage(): void {
+        this.todoList = Utils.loadFromLocalStorage('todoList');
+        this.finishedTodoList = Utils.loadFromLocalStorage('finishedTodoList');
     }
 }
 new TodoX();

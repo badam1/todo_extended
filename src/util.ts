@@ -59,4 +59,17 @@ export class Utils {
             brandLogoElement.src = 'src/resources/img/todo-logo.png';
         });
     }
+
+    static attachSearchBtnChangeHandler() {
+        const searchBtn: HTMLElement = <HTMLElement>document.querySelector('#search-btn');
+        const searchInputElement: HTMLInputElement = <HTMLInputElement>document.querySelector('#search');
+        Observable.fromEvent(searchInputElement, 'focusin').subscribe(() => {
+            searchBtn.className = 'btn btn-success my-2 my-sm-0';
+            searchBtn.textContent = 'Searching...'
+        });
+        Observable.fromEvent(searchInputElement, 'focusout').subscribe(() => {
+            searchBtn.className = 'btn btn-outline-success my-2 my-sm-0';
+            searchBtn.textContent = 'Search'
+        });
+    }
 }
