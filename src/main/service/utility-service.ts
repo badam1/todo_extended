@@ -1,9 +1,10 @@
 import { Observable } from 'rxjs';
+import { Todo } from '../domain/todo-interface';
 /**
  * Created by bodansky-apertus on 2017.06.23..
  */
 
-export class Utils {
+export class UtilityService {
 
     static fadeIn(element: HTMLElement) {
         element.style.opacity = '0';
@@ -27,25 +28,25 @@ export class Utils {
         tick();
     }
 
-    static saveInLocalStorage(key: string, value: any): void {
-        window.localStorage.setItem(key, JSON.stringify(value));
-    }
-
-    static loadFromLocalStorage(key: string): any {
-        return JSON.parse(window.localStorage.getItem(key));
-    }
-
-    static deleteFromLocalStorage(key: string): void {
-        window.localStorage.removeItem(key);
+    static filterListWithKeyword(keyWord: string, list: Todo[]): Todo[] {
+        let resultList: Todo[] = [];
+        list.filter(todo => {
+            if (todo.title.toLowerCase().includes(keyWord)
+                || todo.description.toLowerCase().includes(keyWord)
+                || todo.category.toLowerCase().includes(keyWord)) {
+                resultList.push(todo);
+            }
+        });
+        return resultList;
     }
 
     static displayAlert(className: string, message: string): void {
         const alert: HTMLElement = <HTMLElement>document.querySelector('#alert');
         alert.className = `alert ${className}`;
         alert.innerHTML = `<strong>${message}</strong>`;
-        Utils.fadeIn(alert);
+        UtilityService.fadeIn(alert);
         setTimeout(function () {
-            Utils.fadeOut(alert);
+            UtilityService.fadeOut(alert);
         }, 5000);
     }
 

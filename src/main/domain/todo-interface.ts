@@ -1,5 +1,3 @@
-import { Category } from './category';
-import { CssClasses } from './css-classes';
 /**
  * Created by bodansky-apertus on 2017.06.22..
  */
@@ -12,6 +10,5 @@ export interface Todo {
     description: string;
     time: string;
     finished: boolean;
-    category: Category;
-    cssClasses: CssClasses;
+    category: string;
 }
