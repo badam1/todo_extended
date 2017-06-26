@@ -233,3 +233,6 @@ footer a.fa {
     top: 20%;
     transform: translateX(50%);
 }
+.card {
+    box-shadow: 1px 2px 2px 1px #34302d;
+}

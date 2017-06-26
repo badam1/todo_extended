@@ -251,6 +251,7 @@ export class TodoX {
 
     private onFinishEventChange(todoCheckBox: HTMLInputElement): void {
         const todoToMoveId: number = +todoCheckBox.id.split('-')[1];
+        this.loadTodoListsFromLocalStorage();
         let todoToMove: Todo = this.findInTodoListById(todoToMoveId);
         if (todoToMove == undefined) {
             todoToMove = this.findInFinishedTodoListById(todoToMoveId);
