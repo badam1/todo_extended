@@ -46,7 +46,7 @@ export class Utils {
         Utils.fadeIn(alert);
         setTimeout(function () {
             Utils.fadeOut(alert);
-        }, 3000);
+        }, 5000);
     }
 
     static attachBrandLogoColorChangeHandler() {
@@ -76,8 +76,8 @@ export class Utils {
     static attachShowVideoBtnHandler() {
         const showVideoButtons: HTMLCollection = <HTMLCollection>document.querySelectorAll('.show-video-btn');
         let todoVideoElement: HTMLElement;
-        Observable.fromEvent(showVideoButtons, 'click').subscribe((e) => {
-            const showVideoBtn: HTMLElement = e.srcElement;
+        Observable.fromEvent(showVideoButtons, 'click').subscribe((e: Event) => {
+            const showVideoBtn: HTMLElement = <HTMLElement>e.srcElement;
             if (showVideoBtn.innerText == 'Show video') {
                 const todoId: number = +showVideoBtn.dataset.id;
                 todoVideoElement = <HTMLElement>document.querySelector(`#video-embed-${todoId}`);
@@ -95,8 +95,8 @@ export class Utils {
     }
 
     static attachShowMoreTodoBtnHandler() {
-        const showMoreTodoBtn:HTMLElement = <HTMLElement>document.querySelector('#show-more-todo');
-        const todoListDiv:HTMLElement = <HTMLElement>document.querySelector('#todo-list-div');
+        const showMoreTodoBtn: HTMLElement = <HTMLElement>document.querySelector('#show-more-todo');
+        const todoListDiv: HTMLElement = <HTMLElement>document.querySelector('#todo-list-div');
         Observable.fromEvent(showMoreTodoBtn, 'click').subscribe(() => {
             if (showMoreTodoBtn.innerText == 'Show more') {
                 todoListDiv.className = 'row todo-list';
@@ -111,8 +111,8 @@ export class Utils {
     }
 
     static attachShowMoreFinishedTodoBtnHandler() {
-        const showMoreTodoBtn:HTMLElement = <HTMLElement>document.querySelector('#show-more-finished-todo');
-        const todoListDiv:HTMLElement = <HTMLElement>document.querySelector('#finished-todo-list-div');
+        const showMoreTodoBtn: HTMLElement = <HTMLElement>document.querySelector('#show-more-finished-todo');
+        const todoListDiv: HTMLElement = <HTMLElement>document.querySelector('#finished-todo-list-div');
         Observable.fromEvent(showMoreTodoBtn, 'click').subscribe(() => {
             if (showMoreTodoBtn.innerText == 'Show more') {
                 todoListDiv.className = 'row finished-todo-list';

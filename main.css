@@ -13,7 +13,7 @@ section {
 }
 
 .list-max-height {
-    max-height: 2200px;
+    max-height: 1400px;
     overflow-y: hidden;
 }
 
@@ -44,6 +44,13 @@ section {
 
 .card-block {
     color: #34302d;
+}
+
+.todo-edit {
+    position: absolute;
+    right: 15px;
+    top: 2px;
+    padding: 5px;
 }
 
 .top-right-corner {
@@ -205,6 +212,10 @@ a:hover, .dropdown-item:hover, .navbar .nav-item .nav-link:hover {
 
 .todo-green a:hover, .todo-green i:hover {
     color: #34302d;
+}
+
+.todo-white i:hover {
+    color: #6db33f;
 }
 
 .footer {

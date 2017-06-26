@@ -16,6 +16,8 @@ export class TodoX {
     private todoListElement: HTMLElement;
     private finishedTodoListElement: HTMLElement;
 
+    private static editTodo: boolean = false;
+
     constructor() {
         this.todoList = [];
         this.categoryList = [];
@@ -67,10 +69,13 @@ export class TodoX {
         this.initDeleteTodoHandler();
         this.initFinishTodoHandler();
         this.initCreateTodoHandler();
+        this.initEditTodoHandler();
         this.attachSearchListener();
+        this.initModalCancelBtn();
         Utils.attachShowVideoBtnHandler();
         Utils.attachShowMoreTodoBtnHandler();
         Utils.attachShowMoreFinishedTodoBtnHandler();
+        TodoX.editTodo = false;
     }
 
     private static getTodoTemplate(todoItem): string {
@@ -94,7 +99,8 @@ export class TodoX {
                                     <label for="checkbox-${todoItem.id}">&nbsp;&nbsp;Finished?</label>
                                 </div>
                                 <p class="card-text bottom-right-corner">${todoItem.time}</p>
-                                <i id="delete-${todoItem.id}" class="fa fa-close top-right-corner"></i>
+                                <i id="delete-${todoItem.id}" class="fa fa-trash top-right-corner"></i>
+                                <i id="edit-${todoItem.id}" class="fa fa-edit todo-edit"></i>
                             </div>
                         </div>
                     </div>`;
@@ -139,22 +145,31 @@ export class TodoX {
 
     private initCreateTodoHandler(): void {
         const saveTodoBtn = document.querySelector('#save-todo-btn');
-        saveTodoBtn.addEventListener('click', this.onAddNewTodo.bind(this, saveTodoBtn));
+        if (TodoX.editTodo) {
+            saveTodoBtn.addEventListener('click', this.onSaveEditedTodo.bind(this, saveTodoBtn));
+        } else {
+            saveTodoBtn.addEventListener('click', this.onAddNewTodo.bind(this, saveTodoBtn));
+        }
     }
 
     private onAddNewTodo(): void {
+        this.loadTodoListsFromLocalStorage();
         let inputFields: HTMLInputElement[] = TodoX.getInputFields();
-        if (!TodoX.isInputInvalid(inputFields)) {
-            const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
-            this.todoList.unshift(newTodoObj);
-            Utils.deleteFromLocalStorage('todoList');
-            Utils.saveInLocalStorage('todoList', this.todoList);
+        if (TodoX.isInputValid(inputFields)) {
+            this.putToLocalStorage(inputFields);
             Utils.displayAlert('alert-success', 'Todo successfully created!');
         } else {
-            Utils.displayAlert('alert-danger', 'All the fields are required if you\'d like to add new todo!');
+            Utils.displayAlert('alert-danger', 'There was something wrong with the inputs, todo not saved!');
         }
         inputFields.forEach(input => input.value = '');
         this.refreshTodoList();
+    }
+
+    private putToLocalStorage(inputFields: HTMLInputElement[]) {
+        const newTodoObj: Todo = this.createTodoObjectFromInput(inputFields);
+        this.todoList.unshift(newTodoObj);
+        Utils.deleteFromLocalStorage('todoList');
+        Utils.saveInLocalStorage('todoList', this.todoList);
     }
 
     private static getInputFields(): HTMLInputElement[] {
@@ -167,8 +182,18 @@ export class TodoX {
         return [newTodoTitle, newTodoCategory, newTodoLinkName, newTodoUrl, newTodoDescription, newTodoTime];
     }
 
-    private static isInputInvalid(inputFields: HTMLInputElement[]): boolean {
-        return inputFields.filter(input => input.value == '').length > 0;
+    private static isInputValid(inputFields: HTMLInputElement[]): boolean {
+        let isValid = false;
+        inputFields.forEach(input => {
+            if (input.name == 'time') {
+                let regexp = new RegExp(/\d{2}:\d{2}/g);
+                isValid = regexp.test(input.value);
+            }
+            if (input.value == '') {
+                isValid = false;
+            }
+        });
+        return isValid;
     }
 
     private createTodoObjectFromInput(inputFields: HTMLInputElement[]): Todo {
@@ -178,18 +203,23 @@ export class TodoX {
             cssClasses: {cardBackground: 'todo-white'}
         };
         inputFields.forEach(input => {
-            if (input.name == 'category') {
-                todoObj['category'] = {name: input.value};
-            } else if (input.name == 'url') {
-                const embedLinkPrefix: string = 'https://www.youtube.com/embed/';
-                const embedLinkPostFix: string = '?rel=0';
-                let linkCode = input.value.split('=')[1];
-                todoObj[input.name] = `${embedLinkPrefix}${linkCode}${embedLinkPostFix}`
-            } else {
-                todoObj[input.name] = input.value;
-            }
+            TodoX.fillTodoValuesWithInputValues(input, todoObj);
         });
         return <Todo>todoObj;
+    }
+
+    private static fillTodoValuesWithInputValues(input, todoObj: { id: number; finished: boolean; cssClasses: { cardBackground: string } }) {
+        const youtubeEmbedRegexp = new RegExp(/https:\/\/www.youtube.com\/embed\/.{11}\?rel=0/g);
+        if (input.name == 'category') {
+            todoObj['category'] = {name: input.value};
+        } else if (input.name == 'url' && !youtubeEmbedRegexp.test(input.value)) {
+            const embedLinkPrefix: string = 'https://www.youtube.com/embed/';
+            const embedLinkPostFix: string = '?rel=0';
+            let linkCode = input.value.split('=')[1];
+            todoObj[input.name] = `${embedLinkPrefix}${linkCode}${embedLinkPostFix}`
+        } else {
+            todoObj[input.name] = input.value;
+        }
     }
 
     private getNewTodoId(): number {
@@ -203,13 +233,56 @@ export class TodoX {
         return ++largestIdInTodoList;
     }
 
+    private initEditTodoHandler(): void {
+        this.todoList.forEach(todo => {
+            const editBtn = document.querySelector(`#edit-${todo.id}`);
+            editBtn.addEventListener('click', this.onEditTodo.bind(this, editBtn));
+        });
+        this.finishedTodoList.forEach(todo => {
+            const editBtn = document.querySelector(`#edit-${todo.id}`);
+            editBtn.addEventListener('click', this.onEditTodo.bind(this, editBtn));
+        });
+    }
+
+    private onEditTodo(editBtn: Element): void {
+        TodoX.editTodo = true;
+        this.initCreateTodoHandler();
+        const todoToEditId: number = +editBtn.id.split('-')[1];
+        const todoToEdit: Todo = this.findTodoById(todoToEditId);
+        const inputFields: HTMLInputElement[] = TodoX.getInputFields();
+        const modalLabel: HTMLElement = <HTMLElement>document.querySelector('#addNewTodoModalLabel');
+        modalLabel.innerText = 'Edit todo';
+        inputFields.forEach(input => {
+            if (input.name == 'category') {
+                input.value = todoToEdit.category.name;
+            } else {
+                input.value = todoToEdit[input.name];
+            }
+        });
+        const modalShowBtn: HTMLElement = <HTMLElement>document.querySelector('#addTodoModal');
+        modalShowBtn.click();
+    }
+
+    private onSaveEditedTodo() : void {
+
+    }
+    private initModalCancelBtn(): void {
+        const cancelBtn: HTMLElement = <HTMLElement>document.querySelector('#modal-cancel-btn');
+        cancelBtn.addEventListener('click', TodoX.onCancelBtn.bind(this, cancelBtn));
+    }
+
+    private static onCancelBtn(): void {
+        const inputFields: HTMLInputElement[] = TodoX.getInputFields();
+        inputFields.forEach(input => input.value = '');
+    }
+
     private initDeleteTodoHandler(): void {
         this.todoList.forEach(todo => {
-            const deleteTodoBtn = document.querySelector(`#delete-${todo.id}`);
+            const deleteTodoBtn: HTMLElement = <HTMLElement>document.querySelector(`#delete-${todo.id}`);
             deleteTodoBtn.addEventListener('click', this.onDeleteTodo.bind(this, deleteTodoBtn));
         });
         this.finishedTodoList.forEach(todo => {
-            const deleteTodoBtn = document.querySelector(`#delete-${todo.id}`);
+            const deleteTodoBtn: HTMLElement = <HTMLElement>document.querySelector(`#delete-${todo.id}`);
             deleteTodoBtn.addEventListener('click', this.onDeleteTodo.bind(this, deleteTodoBtn));
         });
     }
@@ -236,6 +309,16 @@ export class TodoX {
 
     private findInFinishedTodoListById(id: number): Todo {
         return this.finishedTodoList.find(todo => todo.id == id);
+    }
+
+    private findTodoById(id: number): Todo {
+        let tempTodo = this.findInTodoListById(id);
+        let tempFinTodo = this.findInFinishedTodoListById(id);
+        if (tempTodo != null) {
+            return tempTodo;
+        } else {
+            return tempFinTodo;
+        }
     }
 
     private initFinishTodoHandler(): void {
@@ -351,7 +434,7 @@ export class TodoX {
 
     private attachSearchListener(): void {
         const searchInputElement: HTMLInputElement = <HTMLInputElement>document.querySelector('#search');
-        let source = Observable.fromEvent(searchInputElement, 'keyup').map(i => i.currentTarget.value).debounceTime(500);
+        let source = Observable.fromEvent(searchInputElement, 'keyup').map((i: any) => i.currentTarget.value).debounceTime(500);
         source.subscribe(keyword => this.filterTodosWithKeyWord(keyword));
     }
 

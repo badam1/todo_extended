@@ -31,7 +31,7 @@
                                 todos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="" data-toggle="modal" data-target="#addNewTodoModal"><i
+                            <a id="addTodoModal" class="nav-link" href="" data-toggle="modal" data-target="#addNewTodoModal"><i
                                     class="fa fa-plus"></i>&nbsp;New Todo</a>
                         </li>
                         <li class="nav-item dropdown">
@@ -136,14 +136,14 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="todo-time" class="col-2 col-form-label">Todo&nbsp;time</label>
+                            <label for="todo-time" class="col-2 col-form-label">Required&nbsp;time</label>
                             <div class="col-10">
-                                <input name="time" class="form-control" type="time" placeholder="todo date..."
+                                <input name="time" class="form-control" type="text" pattern="\d{2}:\d{2}" max="1000" placeholder="format: hh:mm"
                                        id="todo-time">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                            <button id="modal-cancel-btn" type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
                             <button id="save-todo-btn" type="button" data-dismiss="modal" class="btn btn-success">Save
                                 Todo
                             </button>
